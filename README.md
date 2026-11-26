@@ -154,4 +154,4 @@ Premium restaurants are about 6% of the market but hold about 36% of all votes. 
 
 Usha Sanghamitra
 
-[LinkedIn](https://www.linkedin.com/in/ushasanghamitra-siddani-37a076417/)
+[LinkedIn](https://www.linkedin.com/in/ushasanghamitra-siddani-37a076417/) | [GitHub](https://github.com/ushasanghamitrasiddani)
