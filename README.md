@@ -12,7 +12,7 @@ An end-to-end data analysis project (Python, SQL, Tableau) that uses Zomato rest
 
 ## Data
 
-- **Source:** Zomato restaurant listings for Bengaluru, downloaded from Kaggle ([- **Source:** Zomato Bangalore Restaurants dataset on Kaggle (https://www.kaggle.com/datasets/himanshupoddar/zomato-bangalore-restaurants])
+- **Source:** [Zomato Bangalore Restaurants](https://www.kaggle.com/datasets/himanshupoddar/zomato-bangalore-restaurants) on Kaggle (published by himanshupoddar)
 - **Raw data:** 51,717 rows and 17 columns of Zomato restaurant listings in Bengaluru
 - **After cleaning:** 12,376 unique restaurants and 11 columns
 
