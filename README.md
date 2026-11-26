@@ -62,14 +62,44 @@ Before changing anything, I inspected the shape, data types, missing values, dup
 | A few rows missing cost, cuisine, location, or type | Dropped 123 rows | Small share, and these columns are central to the questions |
 | `dish_liked` (54% missing), `menu_item` (77% empty), `reviews_list` (long text), `url`, `phone`, `listed_type` | Dropped these columns | Too incomplete, not needed for the questions, or unreliable after removing duplicates |
 
-### 3. Analysis
-I measured, for each location, cuisine, and price band:
-- **Competition:** number of restaurants
-- **Demand (proxy):** votes per restaurant
-- **Quality:** average rating
-- **Price level:** cost for two
+### 3. Analysis approach
 
-I used **medians** for votes and cost, which are heavily skewed, and set **minimum group sizes** (30 restaurants per location, 50 per cuisine, 15 to 20 per combination) so a tiny group could not top a ranking by luck.
+The goal was to compare locations, cuisines, and price bands fairly. For each group, I measured four things:
+
+| Measure | How it is calculated | What it stands for | Limitation |
+|---|---|---|---|
+| **Competition** | Number of restaurants in the group | How crowded that segment already is | More restaurants does not automatically mean a worse place to open; it can also show that a market exists |
+| **Demand (proxy)** | Votes per restaurant: the number of customer votes a restaurant has collected on Zomato | How much customer attention each restaurant receives | Votes measure popularity on one platform, not sales or profit. They build up over time, so older restaurants have more |
+| **Quality** | Average rating of the restaurants that have one | How satisfied customers are | 25% of restaurants have no rating, so this covers only the rated ones |
+| **Price level** | Cost for two, grouped into four bands: Budget (up to 300), Mid (301 to 600), Upper-mid (601 to 1,000), Premium (above 1,000) | The segment a restaurant targets | The band edges are my choice, based on the quartiles of the data (250, 400, 600) |
+
+The dataset has no sales or revenue figures, so votes are used as a stand-in ("proxy") for demand. This is the biggest assumption in the project, and the findings should be read as signs of popularity, not proof of profitability.
+
+**Why medians for votes and cost**
+
+Votes and cost are heavily skewed: a few very popular or very expensive restaurants pull the average far above what a typical restaurant looks like. For example, Indiranagar averages 477 votes per restaurant, but its median is only 73. Across the city, the average cost for two is 487 against a median of 400. So I used medians to describe a "typical" restaurant.
+
+SQLite has no built-in median function, and the Tableau charts use averages, so the SQL queries and the dashboard report averages. I cross-checked them against the pandas medians and flagged cases where the two disagree. For instance, Koramangala 4th Block ranks second among mid-priced locations by average votes (416) but does not make the top 10 by median votes, which means a few very popular restaurants lift its average.
+
+**Minimum group sizes**
+
+A group with only a handful of restaurants can top a ranking by luck (one restaurant with a 4.9 rating, for example). To avoid this, I only compared groups above a minimum size:
+
+| Comparison | Minimum restaurants per group |
+|---|---|
+| Locations (overall) | 30 |
+| Cuisines | 50 |
+| Cuisine within a price band | 20 |
+| Location within a price band | 15 to 20 |
+
+**Comparing like with like**
+
+Price has a very strong effect on votes: the typical premium restaurant has 442 votes against 8 for a typical budget one. Ranking locations by votes alone would mostly show which locations have more premium restaurants, not which locations are better. So I compared locations within a single price band (mid-priced only, then premium only), which separates the effect of location from the effect of price. I also checked each cuisine's median cost, to see whether a cuisine ranks highly only because it is expensive.
+
+**Handling missing ratings and overlapping cuisines**
+
+- Restaurants without a rating are kept in the counts and vote measures, and excluded only from the rating averages. I did not fill them with an average, because that would create ratings that do not exist.
+- Each restaurant lists several cuisines, so I split them and counted the restaurant under each one. Cuisine counts therefore overlap.
 
 ### 4. SQL
 Key results were rebuilt in SQL (`CASE WHEN`, `GROUP BY`, `HAVING`, `WHERE`) and checked against the pandas results. All of them matched.
