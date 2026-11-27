@@ -100,7 +100,6 @@ Price has a very strong effect on votes: the typical premium restaurant has 442 
 
 - Restaurants without a rating are kept in the counts and vote measures, and excluded only from the rating averages. I did not fill them with an average, because that would create ratings that do not exist.
 - Each restaurant lists several cuisines, so I split them and counted the restaurant under each one. Cuisine counts therefore overlap.
-
 ### 4. SQL
 Key results were rebuilt in SQL (`CASE WHEN`, `GROUP BY`, `HAVING`, `WHERE`) and checked against the pandas results. All of them matched.
 
